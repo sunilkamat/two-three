@@ -22,6 +22,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var highScoresLabel: SKLabelNode?
     private var maxHeightLine: SKShapeNode!
     private var maxHeight: CGFloat = 0
+    private var leftTouchIndicator: SKShapeNode!
+    private var rightTouchIndicator: SKShapeNode!
     
     // Physics categories
     private let launcherCategory: UInt32 = 0x1 << 0
@@ -32,6 +34,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         setupPhysicsWorld()
         setupMaxHeightLine()
+        setupTouchIndicators()
         setupLauncher()
         setupScoreLabel()
         setupMotionManager()
@@ -57,6 +60,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         maxHeightLine.lineWidth = 1
         maxHeightLine.alpha = 0.5  // Make it semi-transparent
         addChild(maxHeightLine)
+    }
+    
+    private func setupTouchIndicators() {
+        // Create left indicator (number 2)
+        leftTouchIndicator = SKShapeNode(circleOfRadius: 40)
+        leftTouchIndicator.fillColor = .white
+        leftTouchIndicator.strokeColor = .white
+        leftTouchIndicator.alpha = 0.2
+        leftTouchIndicator.position = CGPoint(x: frame.width * 0.25, y: frame.height * 0.2)
+        
+        let leftLabel = SKLabelNode(fontNamed: "Arial")
+        leftLabel.text = "2"
+        leftLabel.fontSize = 48
+        leftLabel.fontColor = .white
+        leftLabel.alpha = 0.4
+        leftLabel.verticalAlignmentMode = .center
+        leftTouchIndicator.addChild(leftLabel)
+        
+        // Create right indicator (number 3)
+        rightTouchIndicator = SKShapeNode(circleOfRadius: 40)
+        rightTouchIndicator.fillColor = .white
+        rightTouchIndicator.strokeColor = .white
+        rightTouchIndicator.alpha = 0.2
+        rightTouchIndicator.position = CGPoint(x: frame.width * 0.75, y: frame.height * 0.2)
+        
+        let rightLabel = SKLabelNode(fontNamed: "Arial")
+        rightLabel.text = "3"
+        rightLabel.fontSize = 48
+        rightLabel.fontColor = .white
+        rightLabel.alpha = 0.4
+        rightLabel.verticalAlignmentMode = .center
+        rightTouchIndicator.addChild(rightLabel)
+        
+        addChild(leftTouchIndicator)
+        addChild(rightTouchIndicator)
     }
     
     private func setupLauncher() {
@@ -375,6 +413,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         removeAllChildren()
         score = 0
         isPaused = false
+        setupMaxHeightLine()
+        setupTouchIndicators()
         setupLauncher()
         setupScoreLabel()
         startSpawningNumberBlocks()
