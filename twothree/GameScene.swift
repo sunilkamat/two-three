@@ -260,11 +260,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Get the angle of the launcher pipe
         let angle = launcherPipe.zRotation
         
-        // Calculate the position at the top end of the launcher pipe
-        let pipeLength: CGFloat = 60  // Full length of the pipe
-        let spawnX = launcher.position.x + sin(angle) * pipeLength
-        let spawnY = launcher.position.y + cos(angle) * pipeLength
-        projectile.position = CGPoint(x: spawnX, y: spawnY)
+        // Spawn from slightly above the center of the semi-circular base
+        let spawnOffset: CGFloat = 40  // Adjust this value to move spawn point up/down
+        projectile.position = CGPoint(x: launcher.position.x, y: launcher.position.y + spawnOffset)
         
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: 12)
         projectile.physicsBody?.categoryBitMask = projectileCategory
