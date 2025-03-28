@@ -275,8 +275,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Calculate velocity for shooting in the nozzle's direction
         let speed: CGFloat = 150
-        let velocityX = sin(angle) * speed
-        let velocityY = cos(angle) * speed
+        // Invert the angle for projectile direction while keeping launcher visual tilt
+        let projectileAngle = -angle
+        let velocityX = sin(projectileAngle) * speed
+        let velocityY = cos(projectileAngle) * speed
         projectile.physicsBody?.velocity = CGVector(dx: velocityX, dy: velocityY)
         
         addChild(projectile)
