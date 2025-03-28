@@ -81,13 +81,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         launcher.physicsBody?.categoryBitMask = launcherCategory
         addChild(launcher)
         
-        // Create launcher pipe
-        launcherPipe = SKShapeNode(rectOf: CGSize(width: 60, height: 10))
+        // Create launcher pipe (nozzle)
+        launcherPipe = SKShapeNode(rectOf: CGSize(width: 10, height: 60))  // thin and long rectangle
         launcherPipe.fillColor = .blue
         launcherPipe.strokeColor = .white
         launcherPipe.lineWidth = 2
-        launcherPipe.position = CGPoint(x: 0, y: 30) // Position above the base center
-        launcherPipe.zRotation = CGFloat.pi/2 // Start pointing straight up (90 degrees)
+        launcherPipe.position = CGPoint(x: 0, y: 30)  // Position above the base center
+        launcherPipe.zRotation = 0  // Start pointing straight up
         launcher.addChild(launcherPipe)
     }
     
@@ -110,8 +110,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let rotation = motion.attitude.roll
                 let degrees = rotation * 180 / CGFloat.pi
                 // Clamp between -45 and 45 degrees from vertical
-                let clampedDegrees = max(-45, min(45, degrees))
-                self?.launcherPipe.zRotation = clampedDegrees * CGFloat.pi / 180
+                let clampedDegrees = max(-45, min(45, -degrees))  // Added negative sign back
+                self?.launcherPipe.zRotation = clampedDegrees * CGFloat.pi / 180  // Removed the 90-degree offset
             }
         }
     }
@@ -194,7 +194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let projectile = SKShapeNode(circleOfRadius: 12)
         projectile.fillColor = .yellow
         projectile.strokeColor = .yellow
-        projectile.name = "projectile"  // Add name for identification
+        projectile.name = "projectile"
         
         let label = SKLabelNode(fontNamed: "Arial")
         label.text = "\(number)"
@@ -206,14 +206,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Get the angle of the launcher pipe
         let angle = launcherPipe.zRotation
         
-        // Calculate the position at the top end of the launcher pipe in the launcher's coordinate space
-        let pipeLength: CGFloat = 30  // Half of the pipe's width (60/2)
-        let localX = pipeLength * sin(angle)
-        let localY = pipeLength * cos(angle)
-        
-        // Convert to world coordinates
-        let worldPosition = launcher.convert(CGPoint(x: localX, y: localY), to: self)
-        projectile.position = worldPosition
+        // Calculate the position at the top end of the launcher pipe
+        let pipeLength: CGFloat = 60  // Full length of the pipe
+        let spawnX = launcher.position.x + sin(angle) * pipeLength
+        let spawnY = launcher.position.y + cos(angle) * pipeLength
+        projectile.position = CGPoint(x: spawnX, y: spawnY)
         
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: 12)
         projectile.physicsBody?.categoryBitMask = projectileCategory
@@ -222,8 +219,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         projectile.physicsBody?.affectedByGravity = false
         projectile.physicsBody?.isDynamic = true
         
-        // Calculate velocity for upward V-pattern shooting (reduced by 70%)
-        let speed: CGFloat = 150 // Reduced from 500 to 150
+        // Calculate velocity for shooting in the nozzle's direction
+        let speed: CGFloat = 150
         let velocityX = sin(angle) * speed
         let velocityY = cos(angle) * speed
         projectile.physicsBody?.velocity = CGVector(dx: velocityX, dy: velocityY)
