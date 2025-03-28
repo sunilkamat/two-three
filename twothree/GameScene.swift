@@ -10,6 +10,12 @@ import CoreMotion
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    // MARK: - Constants
+    private let gravity: CGFloat = -0.05
+    private let launcherMoveUpDistance: CGFloat = 50
+    private let launcherMoveUpDuration: TimeInterval = 0.5
+    private let spawnInterval: TimeInterval = 5.0
+    
     // MARK: - Properties
     private var launcher: SKShapeNode!
     private var launcherPipe: SKShapeNode!
@@ -43,7 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private func setupPhysicsWorld() {
         physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0, dy: -0.05)
+        physicsWorld.gravity = CGVector(dx: 0, dy: gravity)
     }
     
     private func setupMaxHeightLine() {
@@ -169,7 +175,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let spawnAction = SKAction.run { [weak self] in
             self?.spawnNumberBlock()
         }
-        let waitAction = SKAction.wait(forDuration: 5.0)
+        let waitAction = SKAction.wait(forDuration: spawnInterval)
         let sequence = SKAction.sequence([spawnAction, waitAction])
         run(SKAction.repeatForever(sequence))
     }
@@ -371,7 +377,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func moveLauncherUp() {
-        let moveUp = SKAction.moveBy(x: 0, y: 50, duration: 0.5)
+        let moveUp = SKAction.moveBy(x: 0, y: launcherMoveUpDistance, duration: launcherMoveUpDuration)
         launcher.run(moveUp) {
             // Check if any part of the launcher (base + pipe) has reached the max height
             let baseHeight: CGFloat = 40  // Semi-circle radius
@@ -476,7 +482,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Reinitialize physics world
         physicsWorld.contactDelegate = self
-        physicsWorld.gravity = CGVector(dx: 0, dy: -0.05)
+        physicsWorld.gravity = CGVector(dx: 0, dy: gravity)
         
         // Recreate all game elements
         setupMaxHeightLine()
