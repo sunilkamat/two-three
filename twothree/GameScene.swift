@@ -15,13 +15,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private let launcherMoveUpDistance: CGFloat = 50
     private let launcherMoveUpDuration: TimeInterval = 0.5
     private let spawnInterval: TimeInterval = 5.0
+    private let pointsPerLevel: Int = 50
+    private let gravityIncreasePerLevel: CGFloat = 0.05
     
     // MARK: - Properties
     private var launcher: SKShapeNode!
     private var launcherPipe: SKShapeNode!
     private var motionManager: CMMotionManager!
     private var scoreLabel: SKLabelNode!
+    private var levelLabel: SKLabelNode!
     private var score: Int = 0
+    private var level: Int = 0
     private var gameOverLabel: SKLabelNode?
     private var playAgainButton: SKLabelNode?
     private var nameInputField: UITextField?
@@ -144,12 +148,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 80)
         addChild(scoreLabel)
         
+        // Add level label
+        levelLabel = SKLabelNode(fontNamed: "Arial")
+        levelLabel.text = "Level: 0"
+        levelLabel.fontSize = 24
+        levelLabel.horizontalAlignmentMode = .right
+        levelLabel.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 120)
+        addChild(levelLabel)
+        
         // Add debug button to clear high scores
         #if DEBUG
         let clearButton = SKLabelNode(fontNamed: "Arial")
         clearButton.text = "Clear Scores"
         clearButton.fontSize = 16
-        clearButton.position = CGPoint(x: frame.maxX - 70, y: frame.maxY - 120)
+        clearButton.position = CGPoint(x: frame.maxX - 70, y: frame.maxY - 160)
         clearButton.name = "clearScores"
         addChild(clearButton)
         #endif
@@ -370,6 +382,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 scoreLabel.text = "Score: \(score)"
+                updateLevel()  // Check and update level
                 // Remove only the projectile
                 projectile.removeFromParent()
             }
@@ -466,6 +479,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Reset game state
         score = 0
+        level = 0
         isPaused = false
         
         // Reset all properties to nil
@@ -473,6 +487,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         launcherPipe = nil
         motionManager = nil
         scoreLabel = nil
+        levelLabel = nil
         gameOverLabel = nil
         playAgainButton = nil
         highScoresLabel = nil
@@ -498,6 +513,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private func clearHighScores() {
         UserDefaults.standard.removeObject(forKey: "HighScores")
         print("High scores cleared!")
+    }
+    
+    private func updateLevel() {
+        let newLevel = score / pointsPerLevel
+        if newLevel > level {
+            level = newLevel
+            levelLabel.text = "Level: \(level)"
+            
+            // Increase gravity for each level
+            let newGravity = gravity - (CGFloat(level) * gravityIncreasePerLevel)
+            physicsWorld.gravity = CGVector(dx: 0, dy: newGravity)
+        }
     }
 }
 
