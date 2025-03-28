@@ -137,6 +137,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Position in top right with padding for notch/pill
         scoreLabel.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 80)
         addChild(scoreLabel)
+        
+        // Add debug button to clear high scores
+        #if DEBUG
+        let clearButton = SKLabelNode(fontNamed: "Arial")
+        clearButton.text = "Clear Scores"
+        clearButton.fontSize = 16
+        clearButton.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 120)
+        clearButton.name = "clearScores"
+        addChild(clearButton)
+        #endif
     }
     
     private func setupMotionManager() {
@@ -290,6 +300,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         
+        // Check for clear scores button tap
+        if let node = nodes(at: location).first,
+           node.name == "clearScores" {
+            clearHighScores()
+            return
+        }
+        
         if gameOverLabel != nil {
             handleGameOverTouch(at: location)
             return
@@ -377,13 +394,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverLabel?.position = CGPoint(x: frame.midX, y: frame.maxY - 300)
         addChild(gameOverLabel!)
         
+        // Check if score qualifies for high scores
+        let highScores = UserDefaults.standard.array(forKey: "HighScores") as? [[String: Any]] ?? []
+        let isHighScore = highScores.count < 5 || score > (highScores.last?["score"] as? Int ?? 0)
+        
+        if isHighScore {
+            // Create text field for name entry
+            let textField = UITextField(frame: CGRect(x: frame.midX - 100, y: frame.midY - 20, width: 200, height: 40))
+            textField.placeholder = "Enter your name"
+            textField.borderStyle = .roundedRect
+            textField.backgroundColor = .white
+            textField.textColor = .black
+            textField.attributedPlaceholder = NSAttributedString(string: "Enter your name", attributes: [.foregroundColor: UIColor.gray])
+            textField.textAlignment = .center
+            textField.delegate = self
+            textField.returnKeyType = .done
+            textField.font = UIFont.systemFont(ofSize: 16)
+            view?.addSubview(textField)
+            nameInputField = textField
+            textField.becomeFirstResponder()
+        } else {
+            showPlayAgainButton()
+            updateHighScores()
+        }
+    }
+    
+    private func showPlayAgainButton() {
         playAgainButton = SKLabelNode(fontNamed: "Arial")
         playAgainButton?.text = "Play Again"
         playAgainButton?.fontSize = 24
         playAgainButton?.position = CGPoint(x: frame.midX, y: frame.maxY - 350)
         addChild(playAgainButton!)
-        
-        updateHighScores()
     }
     
     private func updateHighScores() {
@@ -413,6 +454,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Remove all existing nodes
         removeAllChildren()
         
+        // Remove text field if it exists
+        nameInputField?.removeFromSuperview()
+        nameInputField = nil
+        
         // Reset game state
         score = 0
         isPaused = false
@@ -424,7 +469,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel = nil
         gameOverLabel = nil
         playAgainButton = nil
-        nameInputField = nil
         highScoresLabel = nil
         maxHeightLine = nil
         leftTouchIndicator = nil
@@ -443,5 +487,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Start spawning blocks again
         startSpawningNumberBlocks()
+    }
+    
+    private func clearHighScores() {
+        UserDefaults.standard.removeObject(forKey: "HighScores")
+        print("High scores cleared!")
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension GameScene: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let name = textField.text, !name.isEmpty {
+            var highScores = UserDefaults.standard.array(forKey: "HighScores") as? [[String: Any]] ?? []
+            highScores.append(["score": score, "name": name])
+            highScores.sort { ($0["score"] as? Int ?? 0) > ($1["score"] as? Int ?? 0) }
+            highScores = Array(highScores.prefix(5))
+            UserDefaults.standard.set(highScores, forKey: "HighScores")
+            
+            // Remove text field
+            textField.removeFromSuperview()
+            nameInputField = nil
+            
+            // Show play again button and high scores
+            showPlayAgainButton()
+            displayHighScores(highScores)
+        }
+        textField.resignFirstResponder()
+        return true
     }
 }
