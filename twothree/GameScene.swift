@@ -149,7 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let clearButton = SKLabelNode(fontNamed: "Arial")
         clearButton.text = "Clear Scores"
         clearButton.fontSize = 16
-        clearButton.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 120)
+        clearButton.position = CGPoint(x: frame.maxX - 70, y: frame.maxY - 120)
         clearButton.name = "clearScores"
         addChild(clearButton)
         #endif
