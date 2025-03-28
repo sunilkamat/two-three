@@ -336,13 +336,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverLabel = SKLabelNode(fontNamed: "Arial")
         gameOverLabel?.text = "Game Over! Score: \(score)"
         gameOverLabel?.fontSize = 32
-        gameOverLabel?.position = CGPoint(x: frame.midX, y: frame.midY + 50)
+        gameOverLabel?.position = CGPoint(x: frame.midX, y: frame.maxY - 300)
         addChild(gameOverLabel!)
         
         playAgainButton = SKLabelNode(fontNamed: "Arial")
         playAgainButton?.text = "Play Again"
         playAgainButton?.fontSize = 24
-        playAgainButton?.position = CGPoint(x: frame.midX, y: frame.midY - 50)
+        playAgainButton?.position = CGPoint(x: frame.midX, y: frame.maxY - 350)
         addChild(playAgainButton!)
         
         updateHighScores()
@@ -366,7 +366,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return "\(index + 1). \(name): \(scoreValue)"
         }.joined(separator: "\n")
         highScoresLabel?.fontSize = 20
-        highScoresLabel?.position = CGPoint(x: frame.midX, y: frame.midY - 150)
+        highScoresLabel?.position = CGPoint(x: frame.midX, y: frame.maxY - 550)
         highScoresLabel?.numberOfLines = 0
         addChild(highScoresLabel!)
     }
