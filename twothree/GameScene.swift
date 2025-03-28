@@ -320,10 +320,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private func moveLauncherUp() {
         let moveUp = SKAction.moveBy(x: 0, y: 50, duration: 0.5)
-        launcher.run(moveUp)
-        
-        if launcher.position.y >= maxHeight {
-            gameOver()
+        launcher.run(moveUp) {
+            // Check if any part of the launcher (base + pipe) has reached the max height
+            let baseHeight: CGFloat = 40  // Semi-circle radius
+            let pipeHeight: CGFloat = 60  // Rectangle width (which is the height when rotated)
+            let totalHeight = baseHeight + pipeHeight
+            
+            if self.launcher.position.y + totalHeight/2 >= self.maxHeight {
+                self.gameOver()
+            }
         }
     }
     
