@@ -410,13 +410,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func restartGame() {
+        // Remove all existing nodes
         removeAllChildren()
+        
+        // Reset game state
         score = 0
         isPaused = false
+        
+        // Reset all properties to nil
+        launcher = nil
+        launcherPipe = nil
+        motionManager = nil
+        scoreLabel = nil
+        gameOverLabel = nil
+        playAgainButton = nil
+        nameInputField = nil
+        highScoresLabel = nil
+        maxHeightLine = nil
+        leftTouchIndicator = nil
+        rightTouchIndicator = nil
+        
+        // Reinitialize physics world
+        physicsWorld.contactDelegate = self
+        physicsWorld.gravity = CGVector(dx: 0, dy: -0.05)
+        
+        // Recreate all game elements
         setupMaxHeightLine()
         setupTouchIndicators()
         setupLauncher()
         setupScoreLabel()
+        setupMotionManager()
+        
+        // Start spawning blocks again
         startSpawningNumberBlocks()
     }
 }
