@@ -164,16 +164,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         levelLabel.horizontalAlignmentMode = .right
         levelLabel.position = CGPoint(x: frame.maxX - 20, y: frame.maxY - 120)
         addChild(levelLabel)
-        
-        // Add debug button to clear high scores
-        #if DEBUG
-        let clearButton = SKLabelNode(fontNamed: "Arial")
-        clearButton.text = "Clear Scores"
-        clearButton.fontSize = 16
-        clearButton.position = CGPoint(x: frame.maxX - 70, y: frame.maxY - 160)
-        clearButton.name = "clearScores"
-        addChild(clearButton)
-        #endif
     }
     
     private func setupMotionManager() {
@@ -355,13 +345,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        
-        // Check for clear scores button tap
-        if let node = nodes(at: location).first,
-           node.name == "clearScores" {
-            clearHighScores()
-            return
-        }
         
         if gameOverLabel != nil {
             handleGameOverTouch(at: location)
@@ -550,11 +533,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Start the game (this will handle spawning blocks)
         startGame()
-    }
-    
-    private func clearHighScores() {
-        UserDefaults.standard.removeObject(forKey: "HighScores")
-        print("High scores cleared!")
     }
     
     private func updateLevel() {
