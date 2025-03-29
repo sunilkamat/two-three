@@ -63,42 +63,54 @@ class GameViewController: UIViewController {
         overlay.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         launchScreen.addSubview(overlay)
         
-        // Create title label
+        // Create title label with gradient effect
         let titleLabel = UILabel()
         titleLabel.text = "TwoThree"
-        titleLabel.font = .systemFont(ofSize: 60, weight: .bold)
-        titleLabel.textColor = .white
+        titleLabel.font = .systemFont(ofSize: 48, weight: .heavy)
+        titleLabel.textColor = .systemYellow
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.layer.shadowColor = UIColor.black.cgColor
+        titleLabel.layer.shadowOffset = CGSize(width: 0, height: 2)
+        titleLabel.layer.shadowRadius = 4
+        titleLabel.layer.shadowOpacity = 0.5
         launchScreen.addSubview(titleLabel)
         
         // Create subtitle label
         let subtitleLabel = UILabel()
         subtitleLabel.text = "A Mathematical Adventure"
-        subtitleLabel.font = .systemFont(ofSize: 18)
-        subtitleLabel.textColor = .white
+        subtitleLabel.font = .systemFont(ofSize: 24, weight: .medium)
+        subtitleLabel.textColor = .systemOrange
         subtitleLabel.textAlignment = .center
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.layer.shadowColor = UIColor.white.cgColor
+        subtitleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
+        subtitleLabel.layer.shadowRadius = 2
+        subtitleLabel.layer.shadowOpacity = 0.3
         launchScreen.addSubview(subtitleLabel)
         
         // Create credits label
         let creditsLabel = UILabel()
         creditsLabel.text = "Game by: Sunil, Narain and Mira"
-        creditsLabel.font = .systemFont(ofSize: 12)
-        creditsLabel.textColor = .lightGray
+        creditsLabel.font = .systemFont(ofSize: 18, weight: .regular)
+        creditsLabel.textColor = .systemGreen
         creditsLabel.textAlignment = .center
         creditsLabel.translatesAutoresizingMaskIntoConstraints = false
+        creditsLabel.layer.shadowColor = UIColor.white.cgColor
+        creditsLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
+        creditsLabel.layer.shadowRadius = 2
+        creditsLabel.layer.shadowOpacity = 0.3
         launchScreen.addSubview(creditsLabel)
         
         // Setup constraints
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: launchScreen.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: launchScreen.centerYAnchor, constant: -250),
+            titleLabel.centerYAnchor.constraint(equalTo: launchScreen.centerYAnchor, constant: -50),
             
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             subtitleLabel.centerXAnchor.constraint(equalTo: launchScreen.centerXAnchor),
             
-            creditsLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 8),
+            creditsLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 12),
             creditsLabel.centerXAnchor.constraint(equalTo: launchScreen.centerXAnchor)
         ])
         
