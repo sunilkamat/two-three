@@ -42,13 +42,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Scene Setup
     override func didMove(to view: SKView) {
+        // Don't start the game immediately
+        setupBackground()
         setupPhysicsWorld()
         setupMaxHeightLine()
         setupTouchIndicators()
         setupLauncher()
         setupScoreLabel()
         setupMotionManager()
-        startSpawningNumberBlocks()
+    }
+    
+    private func setupBackground() {
+        let background = SKSpriteNode(imageNamed: "BackgroundImage")
+        background.position = CGPoint(x: frame.midX, y: frame.midY)
+        background.zPosition = -1
+        background.size = frame.size
+        addChild(background)
     }
     
     private func setupPhysicsWorld() {
@@ -500,14 +509,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.gravity = CGVector(dx: 0, dy: gravity)
         
         // Recreate all game elements
+        setupBackground()
         setupMaxHeightLine()
         setupTouchIndicators()
         setupLauncher()
         setupScoreLabel()
         setupMotionManager()
         
-        // Start spawning blocks again
-        startSpawningNumberBlocks()
+        // Start the game (this will handle spawning blocks)
+        startGame()
     }
     
     private func clearHighScores() {
@@ -525,6 +535,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let newGravity = gravity - (CGFloat(level) * gravityIncreasePerLevel)
             physicsWorld.gravity = CGVector(dx: 0, dy: newGravity)
         }
+    }
+    
+    // MARK: - Game Control
+    func startGame() {
+        // Start spawning blocks and enable interactions
+        startSpawningNumberBlocks()
+        isPaused = false
     }
 }
 
