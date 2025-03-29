@@ -193,12 +193,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // MARK: - Game Logic
     private func startSpawningNumberBlocks() {
+        // Remove any existing spawn actions
+        removeAction(forKey: "spawnSequence")
+        
+        // Spawn first block immediately
+        spawnNumberBlock()
+        
+        // Create the spawn sequence for subsequent blocks
         let spawnAction = SKAction.run { [weak self] in
             self?.spawnNumberBlock()
         }
         let waitAction = SKAction.wait(forDuration: spawnInterval)
-        let sequence = SKAction.sequence([spawnAction, waitAction])
-        run(SKAction.repeatForever(sequence))
+        let sequence = SKAction.sequence([waitAction, spawnAction])
+        
+        // Start the sequence for subsequent blocks with a key
+        run(SKAction.repeatForever(sequence), withKey: "spawnSequence")
     }
     
     private func spawnNumberBlock() {
@@ -502,6 +511,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Remove all existing nodes
         removeAllChildren()
         
+        // Remove any existing actions
+        removeAllActions()
+        
         // Remove text field if it exists
         nameInputField?.removeFromSuperview()
         nameInputField = nil
@@ -562,6 +574,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Start spawning blocks and enable interactions
         startSpawningNumberBlocks()
         isPaused = false
+        
+        // Reset score and level labels
+        scoreLabel.text = "Score: 0"
+        levelLabel.text = "Level: 0"
     }
 }
 
