@@ -129,7 +129,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         path.closeSubpath()
         
         launcher = SKShapeNode(path: path)
-        launcher.fillColor = .blue
+        launcher.fillColor = .systemBlue  // Changed to system blue for a more vibrant look
         launcher.strokeColor = .white
         launcher.lineWidth = 2
         launcher.position = CGPoint(x: frame.midX, y: 50)
@@ -140,7 +140,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Create launcher pipe (nozzle)
         launcherPipe = SKShapeNode(rectOf: CGSize(width: 10, height: 60))  // thin and long rectangle
-        launcherPipe.fillColor = .blue
+        launcherPipe.fillColor = .systemBlue  // Changed to match the base
         launcherPipe.strokeColor = .white
         launcherPipe.lineWidth = 2
         launcherPipe.position = CGPoint(x: 0, y: 30)  // Position above the base center
@@ -224,8 +224,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             shape = SKShapeNode(path: createPentagonPath(size: size))
         }
         
-        shape.fillColor = .red
-        shape.strokeColor = .red
+        // Use different colors based on number range for visual variety
+        switch number {
+        case 2...9:
+            shape.fillColor = .systemOrange
+            shape.strokeColor = .systemOrange
+        case 10...15:
+            shape.fillColor = .systemGreen
+            shape.strokeColor = .systemGreen
+        case 16...20:
+            shape.fillColor = .systemPurple
+            shape.strokeColor = .systemPurple
+        default: // 21...25
+            shape.fillColor = .systemPink
+            shape.strokeColor = .systemPink
+        }
+        
         shape.position = CGPoint(x: CGFloat.random(in: 50...frame.maxX-50), y: frame.maxY)
         shape.name = "numberBlock"
         
@@ -267,14 +281,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     private func shootNumber(_ number: Int) {
         let projectile = SKShapeNode(circleOfRadius: 12)
-        projectile.fillColor = .yellow
-        projectile.strokeColor = .yellow
+        // Use different colors for projectiles based on number
+        if number == 2 {
+            projectile.fillColor = .systemOrange
+            projectile.strokeColor = .systemOrange
+        } else {
+            projectile.fillColor = .systemGreen
+            projectile.strokeColor = .systemGreen
+        }
         projectile.name = "projectile"
         
         let label = SKLabelNode(fontNamed: "Arial")
         label.text = "\(number)"
         label.fontSize = 16
-        label.fontColor = .black
+        label.fontColor = .white  // Changed to white for better contrast
         label.verticalAlignmentMode = .center
         projectile.addChild(label)
         
